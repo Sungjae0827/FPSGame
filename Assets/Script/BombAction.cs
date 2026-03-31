@@ -9,7 +9,7 @@ public class BombAction : MonoBehaviour
     {
         GameObject eff = Instantiate(bombEffect);
 
-        eff.transform
+        eff.transform.position = transform.position;
     
         Destroy(gameObject);
     }

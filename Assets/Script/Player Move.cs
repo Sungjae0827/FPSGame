@@ -11,7 +11,7 @@ public class PlayerMove : MonoBehaviour
     float yVelocity = 0;
     public float jumpPower = 10f;
 
-    public bool isjumping;
+    public bool isJumping = false;
 
 
     private void Start()
@@ -40,15 +40,15 @@ public class PlayerMove : MonoBehaviour
         {
             if (isJumping)
             { 
-                isJumping == false;
+                isJumping = false;
                 yVelocity = 0;
             }
         }
 
-        if (Input.GetButtonDown("Jump") && !isjumping)
+        if (Input.GetButtonDown("Jump") && !isJumping)
         {
             yVelocity = jumpPower;
-            isjumping = true;
+            isJumping = true;
         }
 
         yVelocity = gravity * Time.deltaTime;
