@@ -12,8 +12,13 @@ TagManager:
   - Water
   - UI
   - Player
+<<<<<<< HEAD
   - bomb
   - Enemy
+=======
+  - Bomb
+  - 
+>>>>>>> 466d5db38f545fed74f39a49a70e3aa54807ef01
   - 
   - 
   - 
