@@ -8,11 +8,12 @@ public class PlayerMove : MonoBehaviour
     CharacterController cc;
 
     float gravity = -20f;
+
     float yVelocity = 0;
+
     public float jumpPower = 10f;
 
     public bool isJumping = false;
-<<<<<<< HEAD
 
     public int hp = 20;
 
@@ -20,8 +21,6 @@ public class PlayerMove : MonoBehaviour
     {
         hp -= damage;
     }
-=======
->>>>>>> 466d5db38f545fed74f39a49a70e3aa54807ef01
 
 
     private void Start()

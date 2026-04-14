@@ -131,7 +131,7 @@ GameObject:
   - component: {fileID: 56704083}
   - component: {fileID: 56704082}
   - component: {fileID: 56704081}
-  m_Layer: 8
+  m_Layer: 6
   m_Name: Enemy
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -663,6 +663,7 @@ MonoBehaviour:
   bombFactory: {fileID: 8023423704615436875, guid: bbd99d178d258fc4b905f507bccc9131, type: 3}
   throwPower: 15
   bulletEffect: {fileID: 1251234663}
+  weaponPower: 5
 --- !u!1 &963194225
 GameObject:
   m_ObjectHideFlags: 0

@@ -74,7 +74,7 @@ public class EnemyFSM : MonoBehaviour
                 //Damaged();
                 break;
             case EnemyState.Die:
-                Die();
+                //Die();
                 break;
         }
     }
@@ -109,6 +109,7 @@ public class EnemyFSM : MonoBehaviour
         if (Vector3.Distance(transform.position, player.position) < attackDistance)
         {
             currentTime += Time.deltaTime;
+
             if(currentTime > attackDelay)
             {
                 player.GetComponent<PlayerMove>().DamageAction(attackPower);
@@ -143,6 +144,11 @@ public class EnemyFSM : MonoBehaviour
 
     public void HitEnemy(int hitPower)
     {
+        if (m_State ==EnemyState.Damaged || m_State == EnemyState.Die || m_State == EnemyState.Return)
+        {
+            return;
+        }
+
         hp -= hitPower;
 
         if (hp > 0)
@@ -172,6 +178,17 @@ public class EnemyFSM : MonoBehaviour
     }
     void Die()
     {
+        StopAllCoroutines();
 
+        StartCoroutine(DieProcess());
+    }
+
+    IEnumerator DieProcess()
+    {
+        cc.enabled = false;
+
+        yield return new WaitForSeconds(2f);
+        print("¼Ò¸ê!");
+        Destroy(gameObject);
     }
 }
