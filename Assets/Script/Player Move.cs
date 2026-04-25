@@ -26,13 +26,23 @@ public class PlayerMove : MonoBehaviour
 
     public void DamageAction(int damage)
     {
-        hp -= damage;
+        if (hp <= 0) return;
 
-        hpSlider.value = (float)hp / (float)maxHp;
+        hp -= damage; //
+
+        hpSlider.value = (float)hp / (float)maxHp; //
 
         if (hp > 0)
         {
-            StartCoroutine(PlayHitEffect());
+            StartCoroutine(PlayHitEffect()); //
+        }
+        else
+        {
+            hp = 0;
+            print("Player Die!");
+
+            // 게임 매니저에게 게임 오버 알림
+            GameManager.instance.OnGameOver();
         }
     }
     IEnumerator PlayHitEffect()
@@ -51,25 +61,25 @@ public class PlayerMove : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        // 1. 게임 시작 전이면 아래의 모든 로직을 실행하지 않고 리턴합니다.
+        if (GameManager.instance == null || GameManager.instance.isGameStart == false)
+        {
+            return;
+        }
+
+        // 2. 이동 입력 처리
         float h = Input.GetAxis("Horizontal");
         float v = Input.GetAxis("Vertical");
 
         Vector3 dir = new Vector3(h, 0, v);
         dir = dir.normalized;
-
         dir = Camera.main.transform.TransformDirection(dir);
 
-        //transform.position += dir * moveSpeed * Time.deltaTime;
-
-        yVelocity += gravity * Time.deltaTime;
-        dir.y = yVelocity;
-
-        cc.Move(dir * moveSpeed * Time.deltaTime);
-
-        if(cc.collisionFlags == CollisionFlags.Below)
+        // 3. 중력 및 점프 처리
+        if (cc.collisionFlags == CollisionFlags.Below)
         {
             if (isJumping)
-            { 
+            {
                 isJumping = false;
                 yVelocity = 0;
             }
@@ -81,9 +91,10 @@ public class PlayerMove : MonoBehaviour
             isJumping = true;
         }
 
-        yVelocity = gravity * Time.deltaTime;
+        yVelocity += gravity * Time.deltaTime;
         dir.y = yVelocity;
 
-        cc.Move(dir * moveSpeed * Time.captureDeltaTime);
+        // 4. 최종 이동 처리
+        cc.Move(dir * moveSpeed * Time.deltaTime);
     }
 }
