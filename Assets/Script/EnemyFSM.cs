@@ -1,5 +1,6 @@
 using System.Collections;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class EnemyFSM : MonoBehaviour
 {
@@ -32,14 +33,21 @@ public class EnemyFSM : MonoBehaviour
 
     public int hp = 15;
 
+    int maxHp = 15;
+
+    public Slider hpSlider;
+
     //플레이어 트랜스폼
     Transform player;
 
     Vector3 originPos;
+    Quaternion originRot;
 
     public float moveDistance = 20f;
 
     public int weaponPower = 5;
+
+    Animator anim;
 
     void Start()
     {
@@ -47,10 +55,13 @@ public class EnemyFSM : MonoBehaviour
 
         player = GameObject.Find("Player").transform;
 
-        cc = player.GetComponent<CharacterController>();
+        cc = GetComponent<CharacterController>();
 
         //초기 위치 저장하기
         originPos = transform.position;
+        originRot = transform.rotation;
+
+        anim = transform.GetComponentInChildren<Animator>();
     }
 
     // Update is called once per frame
@@ -77,6 +88,7 @@ public class EnemyFSM : MonoBehaviour
                 //Die();
                 break;
         }
+        hpSlider.value = (float)hp / (float)maxHp;
     }
 
     void Idle()
@@ -85,6 +97,9 @@ public class EnemyFSM : MonoBehaviour
         {
             m_State = EnemyState.Move;
             print("상태 전환: idle -> Move");
+
+            //이동 애니메이션으로 전환
+            anim.SetTrigger("IdleToMove");
         }
     }
 
@@ -97,10 +112,20 @@ public class EnemyFSM : MonoBehaviour
         }
         else if (Vector3.Distance(transform.position, player.position) > attackDistance)
         {
+            Vector3 dir = (player.position - transform.position).normalized;
+
+            cc.Move(dir * moveSpeed * Time.deltaTime);
+
+            transform.forward = dir;
+        }
+        else
+        {
             m_State = EnemyState.Attack;
             print("상태 전환: Move -> Attck");
 
             currentTime = attackDelay;
+
+            anim.SetTrigger("MoveToAttackDelay");
         }
     }
 
@@ -112,9 +137,10 @@ public class EnemyFSM : MonoBehaviour
 
             if(currentTime > attackDelay)
             {
-                player.GetComponent<PlayerMove>().DamageAction(attackPower);
+                //player.GetComponent<PlayerMove>().DamageAction(attackPower);
                 print("공격");
                 currentTime = 0;
+                anim.SetTrigger("StartAttack");
             }
         }
         else
@@ -122,7 +148,13 @@ public class EnemyFSM : MonoBehaviour
             m_State = EnemyState.Move;
             print("상태 전환: Attack -> Move");
             currentTime = 0;
+
+            anim.SetTrigger("AttackToMove");
         }
+    }
+    public void AttackAction()
+    {
+        player.GetComponent<PlayerMove>().DamageAction(attackPower);
     }
 
     void Return()
@@ -131,14 +163,22 @@ public class EnemyFSM : MonoBehaviour
         {
             Vector3 dir = (originPos - transform.position).normalized;
             cc.Move(dir * moveSpeed * Time.deltaTime);
+
+            //방향을 복귀 지점으로 전환
+            transform.forward = dir;
         }
         else
         {
             transform.position = originPos;
+            transform.rotation = originRot;
 
-            hp = 15;
+            hp = maxHp;
+
             m_State = EnemyState.Idle;
             print("상태 전환: return -> Idle");
+
+            //대기 애니메이션으로 전환하는 트랜지션을 호출한다
+            anim.SetTrigger("MoveToIdle");
         }
     }
 
@@ -155,12 +195,14 @@ public class EnemyFSM : MonoBehaviour
         {
             m_State = EnemyState.Damaged;
             print("상태 전환: Any state -> Damaged");
+            anim.SetTrigger("Damaged");
             Damaged();
         }
         else
         {
             m_State = EnemyState.Die;
             print("상태 전환: Ant state -> Die");
+            anim.SetTrigger("Die");
             Die();
         }
     }
@@ -171,7 +213,7 @@ public class EnemyFSM : MonoBehaviour
 
     IEnumerator DamageProcess()
     {
-        yield return new WaitForSeconds(0.5f);
+        yield return new WaitForSeconds(1.0f);
 
         m_State = EnemyState.Move;
         print("상태 전환: Damaged -> Move");

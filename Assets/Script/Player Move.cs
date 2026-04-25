@@ -1,5 +1,6 @@
 using UnityEngine;
-
+using UnityEngine.UI;
+using System.Collections;
 public class PlayerMove : MonoBehaviour
 {
 
@@ -17,11 +18,31 @@ public class PlayerMove : MonoBehaviour
 
     public int hp = 20;
 
+    int maxHp = 20;
+
+    public GameObject hitEffect;
+
+    public Slider hpSlider;
+
     public void DamageAction(int damage)
     {
         hp -= damage;
-    }
 
+        hpSlider.value = (float)hp / (float)maxHp;
+
+        if (hp > 0)
+        {
+            StartCoroutine(PlayHitEffect());
+        }
+    }
+    IEnumerator PlayHitEffect()
+    {
+        hitEffect.SetActive(true);
+
+        yield return new WaitForSeconds(0.3f);
+
+        hitEffect.SetActive(false);
+    }
 
     private void Start()
     {

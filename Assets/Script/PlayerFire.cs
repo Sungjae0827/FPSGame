@@ -1,3 +1,4 @@
+using UnityEditor.PackageManager;
 using UnityEngine;
 
 public class PlayerFire : MonoBehaviour
@@ -27,16 +28,14 @@ public class PlayerFire : MonoBehaviour
 
             RaycastHit hitInfo = new RaycastHit();
 
-            if(Physics.Raycast(ray, out hitInfo))
+            if (Physics.Raycast(ray, out hitInfo))
             {
                 if (hitInfo.transform.gameObject.layer == LayerMask.NameToLayer("Enemy"))
                 {
                     EnemyFSM eFSM = hitInfo.transform.GetComponent<EnemyFSM>();
                     eFSM.HitEnemy(weaponPower);
                 }
-            }
-            else
-            {
+
                 bulletEffect.transform.position = hitInfo.point;
 
                 bulletEffect.transform.forward = hitInfo.normal;
