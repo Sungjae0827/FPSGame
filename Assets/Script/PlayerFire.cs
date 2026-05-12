@@ -19,10 +19,12 @@ public class PlayerFire : MonoBehaviour
     public GameObject bulletEffect;
     ParticleSystem ps;
 
+    Animator anim;
     void Start()
     {
         ps = bulletEffect.GetComponent<ParticleSystem>();
         UpdateUI(); // 시작할 때 UI 초기화
+        anim = GetComponentInChildren<Animator>();
     }
 
     void Update()
@@ -56,6 +58,10 @@ public class PlayerFire : MonoBehaviour
                 Fire(mgPower);
                 timer = 0;
             }
+        }
+        if (anim.GetFloat("MoveMotion")==0)
+        {
+            anim.SetTrigger("Attack");
         }
     }
 

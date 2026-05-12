@@ -28,6 +28,8 @@ public class PlayerMove : MonoBehaviour
     {
         if (hp <= 0) return;
 
+        GetComponentInChildren<Animator>().SetFloat("MoveMotion", 0f);
+
         hp -= damage; //
 
         hpSlider.value = (float)hp / (float)maxHp; //
@@ -54,9 +56,12 @@ public class PlayerMove : MonoBehaviour
         hitEffect.SetActive(false);
     }
 
+    Animator anim;
     private void Start()
     {
         cc = GetComponent<CharacterController>();
+
+        anim = GetComponentInChildren<Animator>();
     }
     // Update is called once per frame
     void Update()
@@ -74,6 +79,7 @@ public class PlayerMove : MonoBehaviour
         Vector3 dir = new Vector3(h, 0, v);
         dir = dir.normalized;
         dir = Camera.main.transform.TransformDirection(dir);
+        anim.SetFloat("MoveMotion", dir.magnitude);
 
         // 3. 중력 및 점프 처리
         if (cc.collisionFlags == CollisionFlags.Below)
