@@ -1,5 +1,6 @@
 using UnityEngine;
 using TMPro;
+using System.Collections;
 
 public class PlayerFire : MonoBehaviour
 {
@@ -7,7 +8,7 @@ public class PlayerFire : MonoBehaviour
     public WeaponMode currentMode = WeaponMode.Rifle;
 
     [Header("UI Settings")]
-    public TextMeshProUGUI weaponText; // 아까 만든 TMP 텍스트 연결
+    public TextMeshProUGUI weaponText;
 
     [Header("Weapon Settings")]
     public int riflePower = 5;
@@ -18,6 +19,8 @@ public class PlayerFire : MonoBehaviour
     [Header("Effects")]
     public GameObject bulletEffect;
     ParticleSystem ps;
+
+    public GameObject[] eff_Flash;
 
     Animator anim;
     void Start()
@@ -58,11 +61,19 @@ public class PlayerFire : MonoBehaviour
                 Fire(mgPower);
                 timer = 0;
             }
+            StartCoroutine(ShootEffectOn(0.05f));
         }
         if (anim.GetFloat("MoveMotion")==0)
         {
             anim.SetTrigger("Attack");
         }
+    }
+    IEnumerator ShootEffectOn(float duration)
+    {
+        int num = Random.Range(0, eff_Flash.Length -1);
+        eff_Flash[num].SetActive(true);
+        yield return new WaitForSeconds(duration);
+        eff_Flash[num].SetActive(false);
     }
 
     void Fire(int power)
